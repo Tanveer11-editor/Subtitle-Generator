@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background-light: #F5F5F7;
+  --color-primary-dark: #1D1D1F;
+  --color-secondary-gray: #AAAAAA;
+  --color-primary-blue: #007AFF;
+  
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+
+  --color-border: var(--color-border);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
+  
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  :root {
+    --color-background: #F5F5F7;
+    --color-foreground: #1D1D1F;
+    
+    --color-card: #FFFFFF;
+    --color-card-foreground: #1D1D1F;
+    
+    --color-popover: #FFFFFF;
+    --color-popover-foreground: #1D1D1F;
+    
+    --color-primary: #007AFF;
+    --color-primary-foreground: #FFFFFF;
+    
+    --color-secondary: #E5E5EA;
+    --color-secondary-foreground: #1D1D1F;
+    
+    --color-muted: #E5E5EA;
+    --color-muted-foreground: #8E8E93;
+    
+    --color-accent: #007AFF;
+    --color-accent-foreground: #FFFFFF;
+    
+    --color-border: #E5E5EA;
+    --color-input: #E5E5EA;
+    --color-ring: #007AFF;
+    
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --color-background: #1D1D1F;
+    --color-foreground: #F5F5F7;
+    
+    --color-card: #2C2C2E;
+    --color-card-foreground: #F5F5F7;
+    
+    --color-popover: #2C2C2E;
+    --color-popover-foreground: #F5F5F7;
+    
+    --color-primary: #007AFF;
+    --color-primary-foreground: #FFFFFF;
+    
+    --color-secondary: #3A3A3C;
+    --color-secondary-foreground: #F5F5F7;
+    
+    --color-muted: #3A3A3C;
+    --color-muted-foreground: #AAAAAA;
+    
+    --color-accent: #007AFF;
+    --color-accent-foreground: #FFFFFF;
+    
+    --color-border: #3A3A3C;
+    --color-input: #3A3A3C;
+    --color-ring: #007AFF;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
