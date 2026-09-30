@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect, cloneElement, type ReactElement, type ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -6,14 +6,10 @@ import {
   Undo2,
   Redo2,
   Save,
-  Play,
   Download,
   Settings2,
   Type,
-  Wand2,
-  Music,
-  Scissors,
-  Layers
+  Wand2
 } from 'lucide-react';
 
 import UploadModal from '@/components/editor/UploadModal';
@@ -27,7 +23,14 @@ export default function Editor() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('style');
   const [showExport, setShowExport] = useState(false);
-  const { mediaUrl, captions, isPlaying, setIsPlaying } = useEditorStore();
+  const { mediaUrl, captions, reset, id: storeId } = useEditorStore();
+
+  useEffect(() => {
+    if (id && storeId !== id) {
+      reset();
+      useEditorStore.setState({ id });
+    }
+  }, [id, storeId, reset]);
 
   return (
     <div className="flex flex-col h-screen w-full bg-background overflow-hidden">
@@ -62,14 +65,6 @@ export default function Editor() {
             <Save className="h-4 w-4" /> Save
           </Button>
           <Button 
-            variant="secondary" 
-            size="sm" 
-            className="gap-2 ml-2"
-            onClick={() => setIsPlaying(!isPlaying)}
-          >
-            <Play className={`h-4 w-4 ${isPlaying ? 'fill-current' : ''}`} /> {isPlaying ? 'Pause' : 'Preview'}
-          </Button>
-          <Button 
             size="sm" 
             className="gap-2 ml-2 shadow-sm shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground"
             onClick={() => setShowExport(true)}
@@ -100,16 +95,10 @@ export default function Editor() {
           </div>
         </aside>
 
-        {/* CENTER: Video Preview */}
-        <main className="flex-1 bg-black/5 flex flex-col relative">
-          <div className="flex-1 flex items-center justify-center p-8 overflow-hidden">
+        {/* CENTER: Video Preview Workspace */}
+        <main className="flex-1 bg-[#111111] flex flex-col relative overflow-hidden">
+          <div className="flex-1 flex items-center justify-center p-6 pb-2">
             <VideoPreview />
-          </div>
-          
-          {/* Zoom Controls Overlay */}
-          <div className="absolute bottom-4 right-4 flex bg-card rounded-md border border-border shadow-sm p-1">
-            <span className="text-xs font-medium px-3 py-1.5 text-muted-foreground border-r border-border">Fit</span>
-            <span className="text-xs font-medium px-3 py-1.5">50%</span>
           </div>
         </main>
 
@@ -170,7 +159,7 @@ export default function Editor() {
   );
 }
 
-function InspectorTab({ active, icon, label, onClick }: { active: boolean, icon: React.ReactNode, label: string, onClick: () => void }) {
+function InspectorTab({ active, icon, label, onClick }: { active: boolean, icon: ReactNode, label: string, onClick: () => void }) {
   return (
     <button
       onClick={onClick}
@@ -180,7 +169,7 @@ function InspectorTab({ active, icon, label, onClick }: { active: boolean, icon:
           : "border-transparent text-muted-foreground hover:bg-secondary/50"
       }`}
     >
-      {React.cloneElement(icon as React.ReactElement, { className: "h-4 w-4" })}
+      {cloneElement(icon as ReactElement, { className: "h-4 w-4" } as any)}
       {label}
     </button>
   );

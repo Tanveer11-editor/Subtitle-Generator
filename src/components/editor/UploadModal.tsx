@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { Upload, X, Film, FileAudio } from 'lucide-react';
+import { Upload, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEditorStore } from '@/store/editorStore';
 
 export default function UploadModal({ onUpload }: { onUpload?: () => void }) {
   const [isDragging, setIsDragging] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const { setMedia } = useEditorStore();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { setMedia, setCaptions } = useEditorStore();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -34,19 +34,63 @@ export default function UploadModal({ onUpload }: { onUpload?: () => void }) {
   };
 
   const handleFileSelection = (file: File) => {
-    setFile(file);
-    // Create object URL and get duration
+    setIsProcessing(true);
     const url = URL.createObjectURL(file);
     const type = file.type.startsWith('audio') ? 'audio' : 'video';
     
-    // Quick duration fetch
-    const media = document.createElement(type);
+    const media = document.createElement(type) as HTMLMediaElement;
     media.src = url;
     media.onloadedmetadata = () => {
-      setMedia(url, type, media.duration);
-      if (onUpload) onUpload();
+      // Simulate AI generation time
+      setTimeout(() => {
+        setCaptions([
+          {
+            id: '1',
+            text: 'Bro naan office ku late ah vandhuten',
+            start: 0,
+            end: 2.5,
+            words: [
+              { text: 'Bro', start: 0, end: 0.5 },
+              { text: 'naan', start: 0.5, end: 1.0 },
+              { text: 'office', start: 1.0, end: 1.5 },
+              { text: 'ku', start: 1.5, end: 1.8 },
+              { text: 'late', start: 1.8, end: 2.0 },
+              { text: 'ah', start: 2.0, end: 2.2 },
+              { text: 'vandhuten', start: 2.2, end: 2.5 },
+            ]
+          },
+          {
+            id: '2',
+            text: 'Indha video semma useful ah irukkum',
+            start: 2.5,
+            end: 5.0,
+            words: [
+              { text: 'Indha', start: 2.5, end: 3.0 },
+              { text: 'video', start: 3.0, end: 3.5 },
+              { text: 'semma', start: 3.5, end: 4.0 },
+              { text: 'useful', start: 4.0, end: 4.5 },
+              { text: 'ah', start: 4.5, end: 4.7 },
+              { text: 'irukkum', start: 4.7, end: 5.0 },
+            ]
+          }
+        ]);
+        setMedia(url, type, media.duration);
+        if (onUpload) onUpload();
+      }, 1500);
     };
   };
+
+  if (isProcessing) {
+    return (
+      <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-card w-full max-w-sm rounded-xl shadow-2xl border border-border flex flex-col items-center justify-center p-10">
+          <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+          <h2 className="text-lg font-semibold mb-2">Analyzing Audio...</h2>
+          <p className="text-sm text-muted-foreground text-center">Generating automatic Tanglish captions.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -111,51 +155,6 @@ export default function UploadModal({ onUpload }: { onUpload?: () => void }) {
               </select>
             </div>
           </div>
-          
-          {file && (
-            <div className="bg-secondary/50 p-3 rounded-lg border border-border flex items-center gap-3">
-              {file.type.startsWith('audio') ? <FileAudio className="h-8 w-8 text-emerald-500" /> : <Film className="h-8 w-8 text-blue-500" />}
-              <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-medium truncate">{file.name}</p>
-                <p className="text-xs text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
-              </div>
-              <Button size="sm" onClick={() => {
-                const { setCaptions } = useEditorStore.getState();
-                setCaptions([
-                  {
-                    id: '1',
-                    text: 'Bro naan office ku late ah vandhuten',
-                    start: 0,
-                    end: 2.5,
-                    words: [
-                      { text: 'Bro', start: 0, end: 0.5 },
-                      { text: 'naan', start: 0.5, end: 1.0 },
-                      { text: 'office', start: 1.0, end: 1.5 },
-                      { text: 'ku', start: 1.5, end: 1.8 },
-                      { text: 'late', start: 1.8, end: 2.0 },
-                      { text: 'ah', start: 2.0, end: 2.2 },
-                      { text: 'vandhuten', start: 2.2, end: 2.5 },
-                    ]
-                  },
-                  {
-                    id: '2',
-                    text: 'Indha video semma useful ah irukkum',
-                    start: 2.5,
-                    end: 5.0,
-                    words: [
-                      { text: 'Indha', start: 2.5, end: 3.0 },
-                      { text: 'video', start: 3.0, end: 3.5 },
-                      { text: 'semma', start: 3.5, end: 4.0 },
-                      { text: 'useful', start: 4.0, end: 4.5 },
-                      { text: 'ah', start: 4.5, end: 4.7 },
-                      { text: 'irukkum', start: 4.7, end: 5.0 },
-                    ]
-                  }
-                ]);
-                if (onUpload) onUpload();
-              }}>Generate Captions</Button>
-            </div>
-          )}
         </div>
       </div>
     </div>

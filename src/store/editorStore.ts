@@ -47,9 +47,10 @@ export interface ProjectState {
   setActiveCaption: (id: string | null) => void;
   setCurrentTime: (time: number) => void;
   setIsPlaying: (isPlaying: boolean) => void;
+  reset: () => void;
 }
 
-export const useEditorStore = create<ProjectState>((set) => ({
+const initialState = {
   id: '',
   name: 'New Project',
   mediaUrl: null,
@@ -61,6 +62,10 @@ export const useEditorStore = create<ProjectState>((set) => ({
   isPlaying: false,
   activeStyleId: null,
   activeAnimationId: null,
+};
+
+export const useEditorStore = create<ProjectState>((set) => ({
+  ...initialState,
 
   setMedia: (url, type, duration) => set({ mediaUrl: url, mediaType: type, duration }),
   setCaptions: (captions) => set({ captions }),
@@ -70,4 +75,5 @@ export const useEditorStore = create<ProjectState>((set) => ({
   setActiveCaption: (id) => set({ activeCaptionId: id }),
   setCurrentTime: (time) => set({ currentTime: time }),
   setIsPlaying: (isPlaying) => set({ isPlaying }),
+  reset: () => set(initialState),
 }));

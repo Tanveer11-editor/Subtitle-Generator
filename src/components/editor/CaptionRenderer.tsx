@@ -1,8 +1,7 @@
-import React from 'react';
-import { useEditorStore, WordData } from '@/store/editorStore';
+import { useEditorStore } from '@/store/editorStore';
 
 export default function CaptionRenderer() {
-  const { captions, currentTime, activeStyleId, activeAnimationId } = useEditorStore();
+  const { captions, currentTime } = useEditorStore();
 
   const currentCaption = captions.find(c => currentTime >= c.start && currentTime <= c.end);
 
